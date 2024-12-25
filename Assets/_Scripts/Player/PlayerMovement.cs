@@ -5,14 +5,17 @@ public class PlayerMovement : MonoBehaviour
     private Rigidbody2D rb;
     private PlayerAnimation playerAnimation;
 
-    [Header("Movement settings")]
+    [Header("Movement system")]
     [SerializeField] float speed = 12f;
     [SerializeField] float jumpForce = 30f;
+    [SerializeField] float distanceToTheGround = 1.15f;
+    [SerializeField] Transform groundDetection;
+    [SerializeField] LayerMask isJumpable;
 
     [Header("Combat system")]
     [SerializeField] float damage = 20;
-    [SerializeField] Transform attackPoint;
     [SerializeField] float attackRadius;
+    [SerializeField] Transform attackPoint;
     [SerializeField] LayerMask isDamageable;
 
     private float inputHorizontal;
@@ -21,11 +24,6 @@ public class PlayerMovement : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
         playerAnimation = GetComponentInChildren<PlayerAnimation>();
-    }
-
-    void Start()
-    {
-        
     }
 
     void Update()
@@ -38,7 +36,7 @@ public class PlayerMovement : MonoBehaviour
     {
         inputHorizontal = Input.GetAxisRaw(Constants.INPUTS.HORIZONTAL);
 
-        if(Input.GetKeyDown(KeyCode.Space))
+        if(Input.GetKeyDown(KeyCode.Space) && IsGrounded())
         {
             Jump();
         }
@@ -60,7 +58,13 @@ public class PlayerMovement : MonoBehaviour
         playerAnimation.Jump();
     }
 
-    void TriggerAttack()
+    private bool IsGrounded()
+    {
+        
+        return Physics2D.Raycast(groundDetection.position, Vector2.down, distanceToTheGround, isJumpable);
+    }
+
+    private void TriggerAttack()
     {
         playerAnimation.TriggerAttack();
     }
@@ -75,9 +79,12 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
-    private void OnDrawGizmos()
+    private void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.red;
         Gizmos.DrawSphere(attackPoint.position, attackRadius);
+
+        Gizmos.color = Color.green;
+        Gizmos.DrawLine(groundDetection.position, Vector3.down * distanceToTheGround);
     }
 }
