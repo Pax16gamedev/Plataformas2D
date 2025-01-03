@@ -46,9 +46,9 @@ GameObject:
   - component: {fileID: 4977564478422542076}
   - component: {fileID: 1274933093295788738}
   - component: {fileID: 7054052063846420924}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Wizard
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -63,8 +63,8 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 17, y: 15.3, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
+  m_LocalScale: {x: 1.1, y: 1.1, z: 1.1}
+  m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 5005667684048256415}
   - {fileID: 1887837701000716425}
@@ -232,8 +232,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   fireballPrefab: {fileID: 6359859691676352906, guid: 6218490b3664eff4ab7ac15128f87404, type: 3}
   attackSpawnPoint: {fileID: 1887837701000716425}
-  timeBetweenAttacks: 2
-  bodyDamage: 20
+  timeBetweenAttacks: 2.5
+  bodyDamage: 30
 --- !u!1 &9097679806260883869
 GameObject:
   m_ObjectHideFlags: 0

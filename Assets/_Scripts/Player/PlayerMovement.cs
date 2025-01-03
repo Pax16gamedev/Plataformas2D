@@ -12,13 +12,10 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] Transform groundDetection;
     [SerializeField] LayerMask isJumpable;
 
-    [Header("Combat system")]
-    [SerializeField] float damage = 20;
-    [SerializeField] float attackRadius;
-    [SerializeField] Transform attackPoint;
-    [SerializeField] LayerMask isDamageable;
-
     private float inputHorizontal;
+    private bool canMove = true;
+
+    public bool CanMove { get => canMove; set => canMove = value; }
 
     private void Awake()
     {
@@ -28,11 +25,12 @@ public class PlayerMovement : MonoBehaviour
 
     void Update()
     {
-        GetInputs();
-        Move();
+        if(!canMove) return;
+
+        GetMovementInputs();
     }
 
-    void GetInputs()
+    void GetMovementInputs()
     {
         inputHorizontal = Input.GetAxisRaw(Constants.INPUTS.HORIZONTAL);
 
@@ -40,10 +38,8 @@ public class PlayerMovement : MonoBehaviour
         {
             Jump();
         }
-        if(Input.GetMouseButtonDown(0))
-        {
-            TriggerAttack();
-        }
+
+        Move();
     }
 
     void Move()
@@ -60,31 +56,20 @@ public class PlayerMovement : MonoBehaviour
 
     private bool IsGrounded()
     {
-        
-        return Physics2D.Raycast(groundDetection.position, Vector2.down, distanceToTheGround, isJumpable);
-    }
-
-    private void TriggerAttack()
-    {
-        playerAnimation.TriggerAttack();
-    }
-
-    // Se ejecuta desde un evento de animacion
-    public void Attack()
-    {
-        Collider2D[] colliders = Physics2D.OverlapCircleAll(attackPoint.position, attackRadius, isDamageable);
-        foreach(Collider2D collider in colliders)
+        if(groundDetection == null)
         {
-            collider.GetComponent<HealthSystem>()?.TakeDamage(damage);
+            Debug.LogWarning($"{nameof(groundDetection)} not asigned.");
+            return false;
         }
+
+        return Physics2D.Raycast(groundDetection.position, Vector2.down, distanceToTheGround, isJumpable);
     }
 
     private void OnDrawGizmosSelected()
     {
-        Gizmos.color = Color.red;
-        Gizmos.DrawSphere(attackPoint.position, attackRadius);
+        Vector3 endPosition = groundDetection.position + Vector3.down * distanceToTheGround;
 
         Gizmos.color = Color.green;
-        Gizmos.DrawLine(groundDetection.position, Vector3.down * distanceToTheGround);
+        Gizmos.DrawLine(groundDetection.position, endPosition);
     }
 }

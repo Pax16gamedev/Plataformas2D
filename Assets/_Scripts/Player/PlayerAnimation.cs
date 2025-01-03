@@ -2,13 +2,13 @@ using UnityEngine;
 
 public class PlayerAnimation : MonoBehaviour
 {
-    PlayerMovement player;
     Animator anim;
+    Player player;
 
     private void Awake()
     {
-        player = GetComponentInParent<PlayerMovement>();
         anim = GetComponent<Animator>();
+        player = GetComponentInParent<Player>();
     }
 
     public void Run(float movementInput)
@@ -28,11 +28,11 @@ public class PlayerAnimation : MonoBehaviour
     {
         if(movementInput > 0) // Derecha
         {
-            transform.eulerAngles = Vector3.zero;
+            player.transform.eulerAngles = Vector3.zero;
         }
         else if(movementInput < 0) // Izquierda
         {
-            transform.eulerAngles = new Vector2(0, 180);
+            player.transform.eulerAngles = new Vector2(0, 180);
         }
     }
 
@@ -46,5 +46,6 @@ public class PlayerAnimation : MonoBehaviour
         anim.SetTrigger(Constants.ANIMATIONS.PLAYER.ATTACK_TRIGGER);
     }
 
-    public void Attack() => player.Attack();
+    // Se ejecuta desde un evento de animacion
+    public void AttackEvent() => player.AttackEvent();
 }

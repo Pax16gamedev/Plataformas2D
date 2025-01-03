@@ -183,3 +183,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c8b3b83c53e778d41b3abdffeff41193, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  fireForce: 8
+  lifeSpan: 3
+  damage: 30
