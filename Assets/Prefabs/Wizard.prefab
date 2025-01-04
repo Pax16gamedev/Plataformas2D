@@ -46,6 +46,7 @@ GameObject:
   - component: {fileID: 4977564478422542076}
   - component: {fileID: 1274933093295788738}
   - component: {fileID: 7054052063846420924}
+  - component: {fileID: 7361593890418490094}
   m_Layer: 6
   m_Name: Wizard
   m_TagString: Enemy
@@ -204,7 +205,7 @@ CircleCollider2D:
   m_UsedByComposite: 0
   m_Offset: {x: -0.02037859, y: -0.46868157}
   serializedVersion: 2
-  m_Radius: 0.83546615
+  m_Radius: 0.85
 --- !u!114 &1274933093295788738
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -232,8 +233,25 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   fireballPrefab: {fileID: 6359859691676352906, guid: 6218490b3664eff4ab7ac15128f87404, type: 3}
   attackSpawnPoint: {fileID: 1887837701000716425}
-  timeBetweenAttacks: 2.5
+  timeBetweenAttacks: 4
   bodyDamage: 30
+--- !u!114 &7361593890418490094
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4115648156626328607}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ff601c5400e14e04da7bef7e7011fc26, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  damageColor: {r: 1, g: 0, b: 0, a: 1}
+  flashDuration: 0.1
+  damageParticles: {fileID: 0}
+  audioSource: {fileID: 0}
+  damageSound: {fileID: 0}
 --- !u!1 &9097679806260883869
 GameObject:
   m_ObjectHideFlags: 0
@@ -300,4 +318,4 @@ CircleCollider2D:
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
-  m_Radius: 6
+  m_Radius: 6.5

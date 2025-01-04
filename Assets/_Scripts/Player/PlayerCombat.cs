@@ -1,19 +1,23 @@
-using Unity.VisualScripting;
+using System;
 using UnityEngine;
 
 public class PlayerCombat : MonoBehaviour
 {
-    private PlayerAnimation playerAnimation;
-
     [Header("Combat system")]
     [SerializeField] float damage = 20;
     [SerializeField] float attackRadius = 0.5f;
     [SerializeField] Transform attackPoint;
     [SerializeField] LayerMask isDamageable;
 
+    private PlayerAnimation playerAnimation;
+    private DamageFeedback damageFeedback;
+    private HealthSystem healthSystem;
+
     private void Awake()
     {
         playerAnimation = GetComponentInChildren<PlayerAnimation>();
+        damageFeedback = GetComponentInChildren<DamageFeedback>();
+        healthSystem = GetComponent<HealthSystem>();
     }
 
     private void Update()
@@ -21,6 +25,11 @@ public class PlayerCombat : MonoBehaviour
         if(Input.GetMouseButtonDown(0))
         {
             TriggerAttack();
+        }
+
+        if(Input.GetMouseButtonDown(1))
+        {
+            healthSystem.TakeDamage(1);
         }
     }
 
@@ -53,4 +62,23 @@ public class PlayerCombat : MonoBehaviour
             collision.GetComponent<HealthSystem>()?.TakeDamage(damage);
         }
     }
+
+    private void TriggerVisualFeedback(float dmg)
+    {
+        print($"Daño recibido {dmg}");
+        damageFeedback.TriggerFeedback();
+        CameraShakeManager.Instance.TriggerShake();
+    }
+
+    private void OnEnable()
+    {
+        healthSystem.OnDamage += TriggerVisualFeedback;
+    }
+
+    private void OnDestroy()
+    {
+        healthSystem.OnDamage -= TriggerVisualFeedback;
+    }
+
+    
 }

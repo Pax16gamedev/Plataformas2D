@@ -18,6 +18,7 @@ GameObject:
   - component: {fileID: 1781174137462652785}
   - component: {fileID: 4226956095015439814}
   - component: {fileID: 1473380372089561900}
+  - component: {fileID: 6481790483049962332}
   m_Layer: 6
   m_Name: Bat
   m_TagString: Enemy
@@ -248,6 +249,23 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   attackDistance: 1.5
   timeBetweenAttacks: 3
+--- !u!114 &6481790483049962332
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 312479953406464971}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ff601c5400e14e04da7bef7e7011fc26, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  damageColor: {r: 1, g: 0, b: 0, a: 1}
+  flashDuration: 0.1
+  damageParticles: {fileID: 0}
+  audioSource: {fileID: 0}
+  damageSound: {fileID: 0}
 --- !u!1 &7037415864261818866
 GameObject:
   m_ObjectHideFlags: 0

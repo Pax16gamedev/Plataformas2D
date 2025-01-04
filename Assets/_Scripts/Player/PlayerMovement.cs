@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
@@ -7,15 +8,28 @@ public class PlayerMovement : MonoBehaviour
 
     [Header("Movement system")]
     [SerializeField] float speed = 12f;
+    [SerializeField] float jumpSpeed = 12f;
+
+    [Header("Ground")]
     [SerializeField] float jumpForce = 30f;
-    [SerializeField] float distanceToTheGround = 1.15f;
+    [SerializeField] float distanceToTheGround = 0.15f;
     [SerializeField] Transform groundDetection;
     [SerializeField] LayerMask isJumpable;
 
+    [Header("Air time")]
+    [SerializeField] private float coyoteTime = 0.25f;
+    private float timeInAir;
+
+    [Header("Jump Time")]
+    [SerializeField] private float maxJumpTime = 0.2f;
+    private float jumpTime = 0;
+
+    private int maxJumps = 1;
+    private int jumps = 0;
+
     private float inputHorizontal;
     private bool canMove = true;
-
-    public bool CanMove { get => canMove; set => canMove = value; }
+    public bool CanMove { get => canMove; set => canMove = value; }   
 
     private void Awake()
     {
@@ -27,19 +41,21 @@ public class PlayerMovement : MonoBehaviour
     {
         if(!canMove) return;
 
-        GetMovementInputs();
+        CheckForJumpConditions();
+        GetMovementInputs();        
     }
 
     void GetMovementInputs()
     {
         inputHorizontal = Input.GetAxisRaw(Constants.INPUTS.HORIZONTAL);
 
-        if(Input.GetKeyDown(KeyCode.Space) && IsGrounded())
+        Move();
+
+        if(Input.GetKeyDown(KeyCode.Space))
         {
-            Jump();
+            TriggerJump();
         }
 
-        Move();
     }
 
     void Move()
@@ -48,10 +64,38 @@ public class PlayerMovement : MonoBehaviour
         playerAnimation.Run(inputHorizontal);
     }
 
+    void TriggerJump()
+    {
+        if(jumps >= maxJumps) return; // Evita doble salto // 2: No lo evita
+
+        if(IsGrounded() || timeInAir < coyoteTime)
+        {
+            Jump();
+        }
+    }
+
     void Jump()
     {
+        rb.velocity = new Vector2(rb.velocity.x, 0); // Reinicia la velocidad vertical para evitar acumulaciones.
         rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
+        //rb.velocity = new Vector2(rb.velocity.x, jumpSpeed);
         playerAnimation.Jump();
+
+        jumps++;
+    }
+
+    void CheckForJumpConditions()
+    {
+        if(IsGrounded())
+        {
+            timeInAir = 0;
+            jumpTime = 0;
+            jumps = 0;
+        }
+        else
+        {
+            timeInAir += Time.deltaTime;
+        }
     }
 
     private bool IsGrounded()
@@ -65,7 +109,7 @@ public class PlayerMovement : MonoBehaviour
         return Physics2D.Raycast(groundDetection.position, Vector2.down, distanceToTheGround, isJumpable);
     }
 
-    private void OnDrawGizmosSelected()
+    private void OnDrawGizmos()
     {
         Vector3 endPosition = groundDetection.position + Vector3.down * distanceToTheGround;
 

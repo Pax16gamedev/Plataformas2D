@@ -111,8 +111,8 @@ GameObject:
   - component: {fileID: 4469435817949084417}
   - component: {fileID: 6522192254190910750}
   - component: {fileID: 8320733657485354216}
-  - component: {fileID: 5402140167402339044}
   - component: {fileID: 3314956413570169529}
+  - component: {fileID: 5402140167402339044}
   - component: {fileID: 4755647186852513843}
   m_Layer: 6
   m_Name: Player
@@ -227,12 +227,28 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 12
+  jumpSpeed: 12
   jumpForce: 30
   distanceToTheGround: 0.15
   groundDetection: {fileID: 7899139889831266362}
   isJumpable:
     serializedVersion: 2
     m_Bits: 256
+  coyoteTime: 0.15
+  maxJumpTime: 0.2
+--- !u!114 &3314956413570169529
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2494823264761358777}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a0885793780ca254ca59f58a007afdc3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  health: 100
 --- !u!114 &5402140167402339044
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -251,19 +267,6 @@ MonoBehaviour:
   isDamageable:
     serializedVersion: 2
     m_Bits: 64
---- !u!114 &3314956413570169529
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2494823264761358777}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a0885793780ca254ca59f58a007afdc3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  health: 100
 --- !u!114 &4755647186852513843
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -319,6 +322,7 @@ GameObject:
   - component: {fileID: 5484366510481187623}
   - component: {fileID: 390138856083284754}
   - component: {fileID: 6254040028402552608}
+  - component: {fileID: 8406831461134921456}
   m_Layer: 0
   m_Name: Visual
   m_TagString: Untagged
@@ -426,3 +430,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 28765b5b4526c5c408f22df872859b49, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &8406831461134921456
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5655099787748090888}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ff601c5400e14e04da7bef7e7011fc26, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  damageColor: {r: 1, g: 0, b: 0, a: 1}
+  flashDuration: 0.1
+  damageParticles: {fileID: 0}
+  audioSource: {fileID: 0}
+  damageSound: {fileID: 0}
