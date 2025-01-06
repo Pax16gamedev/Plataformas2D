@@ -1,8 +1,11 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class PatrolState : State<EnemyController>
 {
+    public event Action OnPatrolStateExit;
+
     [SerializeField] protected Transform[] route;
     [SerializeField] protected float patrolSpeed = 2;
 
@@ -64,6 +67,7 @@ public class PatrolState : State<EnemyController>
     {
         if(collision.CompareTag(Constants.TAGS.PLAYER_DETECTION))
         {
+            OnPatrolStateExit?.Invoke();
             controller.ChangeState(controller.ChaseState);
         }
 

@@ -1,17 +1,24 @@
+using System;
 using UnityEngine;
 
 public class EnemyBase : MonoBehaviour
 {
+    [Header("Stats")]
     [SerializeField] protected float bodyDamage = 20;
     [SerializeField] protected float patrolSpeed = 2;
 
-    protected HealthSystem healthSystem;
-    private DamageFeedback damageFeedback;
+    [Header("Puntuacion")]
+    [SerializeField] protected int scoreValue = 100;
 
-    private void Awake()
+    public event Action<int> OnEnemyDeath;
+
+    protected HealthSystem healthSystem;
+    protected VisualDamageFeedback damageFeedback;
+
+    protected void Awake()
     {
         healthSystem = GetComponent<HealthSystem>();
-        damageFeedback = GetComponent<DamageFeedback>();
+        damageFeedback = GetComponent<VisualDamageFeedback>();
     }
 
     private void TriggerVisualFeedback(float dmg)
@@ -28,5 +35,6 @@ public class EnemyBase : MonoBehaviour
     private void OnDestroy()
     {
         healthSystem.OnDamage -= TriggerVisualFeedback;
+        OnEnemyDeath?.Invoke(scoreValue);
     }
 }

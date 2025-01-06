@@ -1,7 +1,7 @@
 using System.Collections;
 using UnityEngine;
 
-public class DamageFeedback : MonoBehaviour
+public class VisualDamageFeedback : MonoBehaviour
 {
     [Header("Visual Feedback")]
     [SerializeField] private Color damageColor = Color.red;

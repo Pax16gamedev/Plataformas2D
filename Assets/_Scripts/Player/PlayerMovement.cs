@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
@@ -9,6 +10,16 @@ public class PlayerMovement : MonoBehaviour
     [Header("Movement system")]
     [SerializeField] float speed = 12f;
     [SerializeField] float jumpSpeed = 12f;
+    private PlayerVisual playerVisual;
+
+    [Header("Dash")]
+    [SerializeField] private float dashSpeed = 20f;
+    [SerializeField] private float dashDuration = 0.2f;
+    [SerializeField] private float dashCooldown = 1f;
+    private bool isDashing = false;
+    private float dashCooldownTimer = 0;
+
+    private float initialGravityScale;
 
     [Header("Ground")]
     [SerializeField] float jumpForce = 30f;
@@ -28,6 +39,8 @@ public class PlayerMovement : MonoBehaviour
     private int jumps = 0;
 
     private float inputHorizontal;
+    private int lastDirection = 1; // 1 derecha, -1 izquierda
+
     private bool canMove = true;
     public bool CanMove { get => canMove; set => canMove = value; }   
 
@@ -35,6 +48,9 @@ public class PlayerMovement : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
         playerAnimation = GetComponentInChildren<PlayerAnimation>();
+        playerVisual = GetComponentInChildren<PlayerVisual>();
+
+        initialGravityScale = rb.gravityScale;
     }
 
     void Update()
@@ -42,20 +58,43 @@ public class PlayerMovement : MonoBehaviour
         if(!canMove) return;
 
         CheckForJumpConditions();
-        GetMovementInputs();        
+        GetMovementInputs();
+        HandleDashCooldown();
     }
 
     void GetMovementInputs()
     {
         inputHorizontal = Input.GetAxisRaw(Constants.INPUTS.HORIZONTAL);
 
-        Move();
+        CheckDirection();
+
+        if(!isDashing)
+        {
+            Move();
+        }
 
         if(Input.GetKeyDown(KeyCode.Space))
         {
             TriggerJump();
         }
 
+        if(Input.GetKeyDown(KeyCode.LeftShift) && dashCooldownTimer <= 0)
+        {
+            TriggerDash();
+        }
+
+    }
+
+    private void CheckDirection()
+    {
+        if(inputHorizontal < 0)
+        {
+            lastDirection = -1;
+        }
+        else if(inputHorizontal > 0)
+        {
+            lastDirection = 1;
+        }
     }
 
     void Move()
@@ -107,6 +146,39 @@ public class PlayerMovement : MonoBehaviour
         }
 
         return Physics2D.Raycast(groundDetection.position, Vector2.down, distanceToTheGround, isJumpable);
+    }
+
+    private void HandleDashCooldown()
+    {
+        if(dashCooldownTimer <= 0) return;
+
+        dashCooldownTimer -= Time.deltaTime;
+    }
+
+    private void TriggerDash()
+    {
+        StartCoroutine(Dash());
+    }
+
+    private IEnumerator Dash()
+    {
+        isDashing = true;
+        dashCooldownTimer = dashCooldown;
+
+        // Desactivo la gravedad mientras haces el dash
+        rb.gravityScale = 0;
+        rb.velocity = new Vector2(lastDirection * dashSpeed, 0);
+
+        playerAnimation.Dash();
+        playerVisual.ActivateDashTrail();
+
+        yield return new WaitForSeconds(dashDuration);
+
+        playerVisual.DeactivateDashTrail();
+
+        // Restauro la gravedad y permito el movimiento normal
+        rb.gravityScale = initialGravityScale;
+        isDashing = false;
     }
 
     private void OnDrawGizmos()

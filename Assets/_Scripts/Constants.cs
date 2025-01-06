@@ -7,6 +7,7 @@ public static class Constants
 
     public static class TAGS
     {
+        public const string SCENE_LOADER = "SceneLoader";
         public const string PLAYER_HITBOX = "PlayerHitbox";
         public const string PLAYER_DETECTION = "PlayerDetection";
         public const string ENEMY = "Enemy";
@@ -29,8 +30,8 @@ public static class Constants
 
         public static class BAT
         {
-            public const string ATTACK_BOOL = "attacking";
-            public const string EXPLODE_TRIGGER = "explode";
+            public const string ATTACK_BOOL = "atacar";
+            public const string EXPLODE_TRIGGER = "explosion";
         }
 
         public static class WIZARD
@@ -49,8 +50,5 @@ public static class Constants
         
     }
 
-    public static class SCENES
-    {
-        public const string MAIN_MENU = "00_MainMenu";
-    }
+ 
 }

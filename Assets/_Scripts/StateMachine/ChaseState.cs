@@ -30,15 +30,25 @@ public class ChaseState : State<EnemyController>
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if(collision.TryGetComponent<Player>(out Player player))
+        //if(collision.TryGetComponent<Player>(out Player player))
+        //{
+        //    target = player.transform;
+        //}
+
+        if(collision.CompareTag(Constants.TAGS.PLAYER_DETECTION))
         {
-            target = player.transform;
+            target = collision.gameObject.transform;
         }
     }
 
     private void OnTriggerExit2D(Collider2D collision)
     {
-        if(collision.TryGetComponent<Player>(out Player player))
+        //if(collision.TryGetComponent<Player>(out Player player))
+        //{
+        //    controller.ChangeState(controller.PatrolState);
+        //}
+
+        if(collision.CompareTag(Constants.TAGS.PLAYER_DETECTION))
         {
             controller.ChangeState(controller.PatrolState);
         }

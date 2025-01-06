@@ -46,6 +46,11 @@ public class PlayerAnimation : MonoBehaviour
         anim.SetTrigger(Constants.ANIMATIONS.PLAYER.ATTACK_TRIGGER);
     }
 
+    public void Dash()
+    {
+        print("Dashing animation!");
+    }
+
     // Se ejecuta desde un evento de animacion
     public void AttackEvent() => player.AttackEvent();
 }

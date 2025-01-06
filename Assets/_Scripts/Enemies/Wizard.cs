@@ -1,18 +1,18 @@
 using System.Collections;
 using UnityEngine;
 
-public class Wizard : MonoBehaviour
+public class Wizard : EnemyBase
 {
     [SerializeField] GameObject fireballPrefab;
     [SerializeField] Transform attackSpawnPoint;
     [SerializeField] float timeBetweenAttacks = 2;
-    [SerializeField] float bodyDamage = 20;
 
     private Animator animator;
     private Transform target;
 
-    void Awake()
+    private void Awake()
     {
+        base.Awake();
         animator = GetComponent<Animator>();
     }
 
@@ -42,7 +42,7 @@ public class Wizard : MonoBehaviour
 
     private void StopAttacking()
     {
-        StopAllCoroutines();
+        StopCoroutine(TriggerAttack());
     }
 
     IEnumerator TriggerAttack()

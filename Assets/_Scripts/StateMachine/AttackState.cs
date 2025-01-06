@@ -1,7 +1,10 @@
+using System;
 using UnityEngine;
 
 public class AttackState : State<EnemyController>
 {
+    public event Action OnAttack;
+
     private Transform target; // Doy por hecho que es el jugador o le vuelvo a hacer un ontrigger
 
     [SerializeField] float attackDistance = 1.5f; // Igual que stoppingDistance de ChaseState
@@ -21,6 +24,7 @@ public class AttackState : State<EnemyController>
         if(timer > timeBetweenAttacks)
         {
             print($"Ataque de {name}!");
+            OnAttack?.Invoke();
             timer = 0;
         }
 
@@ -37,9 +41,14 @@ public class AttackState : State<EnemyController>
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if(collision.TryGetComponent<Player>(out Player player))
+        //if(collision.TryGetComponent<Player>(out Player player))
+        //{
+        //    target = player.transform;
+        //}
+
+        if(collision.CompareTag(Constants.TAGS.PLAYER_DETECTION))
         {
-            target = player.transform;
+            target = collision.gameObject.transform;
         }
     }
 

@@ -1,69 +1,37 @@
+using System;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
-public class Bat : EnemyBase
+public class Bat : MonoBehaviour
 {
-    [SerializeField] private Transform[] waypoints;
+    private Animator animator;
 
-    private Vector3 currentDestination;
-    private int currentIndexDestination = 0;
+    private PatrolState patrolState;
+    private AttackState attackState;
 
-    void Start()
+    private void Awake()
     {
-        currentDestination = waypoints[currentIndexDestination].position;
-        StartCoroutine(Patrol());
+        animator = GetComponent<Animator>();
+        patrolState = GetComponent<PatrolState>();
+        attackState = GetComponent<AttackState>();
     }
 
-    private IEnumerator Patrol()
+    private void OnEnable()
     {
-        while(true)
-        {
-            while(transform.position != currentDestination)
-            {
-                Move();
-                yield return null; // = yield return new WaitForEndOfFrame();
-            }
-            NextWaypoint();
-        }
+        //patrolState.OnPatrolStateExit += TriggerAttackAnimation;
+        attackState.OnAttack += TriggerAttackAnimation;
     }
 
-    private void Move()
+    private void OnDisable()
     {
-        transform.position = Vector3.MoveTowards(transform.position, waypoints[currentIndexDestination].position, patrolSpeed * Time.deltaTime);
+        //patrolState.OnPatrolStateExit -= TriggerAttackAnimation;
+        attackState.OnAttack += TriggerAttackAnimation;
     }
 
-    private void NextWaypoint()
+    // Se ejecuta desde un evento de animacion
+    private void TriggerAttackAnimation()
     {
-        currentIndexDestination++;
-        if(currentIndexDestination >= waypoints.Length)
-        {
-            currentIndexDestination = 0;
-        }
-        currentDestination = waypoints[currentIndexDestination].position;
-        LookAtDestination();
-    }
-
-    private void LookAtDestination()
-    {
-        if(currentDestination.x > transform.position.x)
-        {
-            transform.eulerAngles = Vector3.zero;
-        }
-        else if(currentDestination.x < transform.position.x)
-        {
-            transform.eulerAngles = new Vector2(0, 180);
-        }
-    }
-
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
-        if(collision.gameObject.CompareTag(Constants.TAGS.PLAYER_DETECTION))
-        {
-            print("Player detectado. Inmolación!!!!");
-        }
-        else if(collision.gameObject.CompareTag(Constants.TAGS.PLAYER_HITBOX))
-        {
-            collision.GetComponent<HealthSystem>()?.TakeDamage(bodyDamage);
-        }
+        animator.SetTrigger(Constants.ANIMATIONS.BAT.ATTACK_BOOL);
     }
 }

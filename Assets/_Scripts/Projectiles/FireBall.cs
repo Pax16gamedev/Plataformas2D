@@ -2,7 +2,8 @@ using UnityEngine;
 
 public class FireBall : MonoBehaviour
 {
-    Rigidbody2D rb;
+    private Rigidbody2D rb;
+    private Animator animator;
 
     [SerializeField] float fireForce = 8;
     [SerializeField] float lifeSpan = 3;
@@ -15,21 +16,18 @@ public class FireBall : MonoBehaviour
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
+        animator = GetComponent<Animator>();
     }
 
     void Start()
     {
         rb.AddForce(transform.right * fireForce, ForceMode2D.Impulse);
-        Destroy(gameObject, lifeSpan);
+        Invoke(nameof(TriggerExplosion), lifeSpan);
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if(collision.CompareTag(Constants.TAGS.PLAYER_HITBOX))
-        {
-            collision.GetComponent<HealthSystem>()?.TakeDamage(damage);
-            Destroy(gameObject);
-        }
+        
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
@@ -39,8 +37,25 @@ public class FireBall : MonoBehaviour
             currentBounces++;
             if(currentBounces >= maxBounces)
             {
-                Destroy(gameObject);
+                TriggerExplosion();
             }
         }
+
+        if(collision.gameObject.CompareTag(Constants.TAGS.PLAYER_HITBOX))
+        {
+            collision.gameObject.GetComponent<HealthSystem>()?.TakeDamage(damage);
+            TriggerExplosion();
+        }
+    }
+
+    private void TriggerExplosion()
+    {
+        animator.SetTrigger(Constants.ANIMATIONS.FIREBALL.EXPLODE_TRIGGER);
+    }
+
+    // Se ejecuta desde un evento de animacion
+    private void DestroyFireBall()
+    {
+        Destroy(gameObject);
     }
 }

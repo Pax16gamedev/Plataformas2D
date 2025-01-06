@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 
 public class PlayerCombat : MonoBehaviour
@@ -10,13 +9,13 @@ public class PlayerCombat : MonoBehaviour
     [SerializeField] LayerMask isDamageable;
 
     private PlayerAnimation playerAnimation;
-    private DamageFeedback damageFeedback;
+    private VisualDamageFeedback damageFeedback;
     private HealthSystem healthSystem;
 
     private void Awake()
     {
         playerAnimation = GetComponentInChildren<PlayerAnimation>();
-        damageFeedback = GetComponentInChildren<DamageFeedback>();
+        damageFeedback = GetComponentInChildren<VisualDamageFeedback>();
         healthSystem = GetComponent<HealthSystem>();
     }
 
