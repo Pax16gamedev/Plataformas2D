@@ -12,7 +12,7 @@ public class MainMenuManager : MonoBehaviour
 
     public void PlayGame()
     {
-        levelSelection.SelectLevel(1); // TODO:: Cambiar esto a ultimo nivel jugado
+        levelSelection.SelectLevel(1); // TODO: Cambiar esto a ultimo nivel jugado
     }
 
 

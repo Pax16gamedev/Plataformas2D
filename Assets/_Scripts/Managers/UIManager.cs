@@ -25,6 +25,11 @@ public class UIManager : MonoBehaviour
         DontDestroyOnLoad(gameObject);
     }
 
+    private void Start()
+    {
+        UpdateScoreText(0);
+    }
+
     public void UpdateTimeText(float text)
     {
         timeTMP.text = $"tiempo: {text:F2} s";
