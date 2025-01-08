@@ -8,6 +8,7 @@ TagManager:
   - PlayerHitbox
   - PlayerDetection
   - Ground
+  - SceneLoader
   layers:
   - Default
   - TransparentFX
