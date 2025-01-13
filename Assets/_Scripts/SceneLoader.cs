@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -14,11 +15,20 @@ public class SceneLoader : MonoBehaviour
     [SerializeField] float waitTimeDelayInSeconds = 1;
 
     [Header("Levels")]
-    [SerializeField] LevelInfoSO[] levels;
+    [SerializeField] LevelInfoSO[] levels; // Alineado con Build Index -1
 
     private void Start()
     {
+        CheckLevelsWithBuildIndex();
         main.SetActive(false);
+    }
+
+    private void CheckLevelsWithBuildIndex()
+    {
+        var coincidenNiveles = levels.Length == GameManager.Instance.TotalLevels;
+        if(coincidenNiveles) return;
+
+        Debug.Log($"No coinciden los niveles en {name} y BuildIndex. Revisar!");
     }
 
     public void LoadSceneWithProgress(int sceneIndex)
