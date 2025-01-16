@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -52,7 +51,16 @@ public class GameManager : MonoBehaviour
         UIManager.Instance.UpdateTimeText(timeElapsed);
         UIManager.Instance.UpdateScoreText(score);
 
-        print($"Current level info {currentLevelInfo.ID}");
+#if UNITY_WEBGL && !UNITY_EDITOR
+        Application.wantsToQuit += OnWebGLWantsToQuit;
+#endif
+    }
+
+    private void OnDestroy()
+    {
+#if UNITY_WEBGL && !UNITY_EDITOR
+        Application.wantsToQuit -= OnWebGLWantsToQuit;
+#endif
     }
 
     private void Update()
@@ -83,6 +91,7 @@ public class GameManager : MonoBehaviour
         if(IsFirstGameplay())
         {
             InitializeLevels(TotalLevels);
+            OnLevelProgressChanged?.Invoke();
         }
     }
     private bool IsFirstGameplay()
@@ -92,10 +101,11 @@ public class GameManager : MonoBehaviour
 
     private void InitializeLevels(int totalLevels)
     {
-        gameData = new GameData();
+        print($"Inicializando {totalLevels} niveles");
+        //gameData = new GameData();
         for(int i = 1; i <= totalLevels; i++)
         {
-            if(GameData.levels.Exists(l => l.levelNumber == i)) continue; // Evitar duplicados.
+            if(gameData.levels.Exists(l => l.levelNumber == i)) continue; // Evitar duplicados.
 
             LevelData levelData = new LevelData
             {
@@ -109,7 +119,7 @@ public class GameManager : MonoBehaviour
                 levelUnlocked = (i == 1) // Solo el primer nivel desbloqueado.
             };
 
-            GameData.levels.Add(levelData);
+            gameData.levels.Add(levelData);
         }
         SaveGame(); // Guarda los datos inicializados.
     }
@@ -130,8 +140,12 @@ public class GameManager : MonoBehaviour
 
     public void CompleteLevel(int levelNumber, float timeTaken, int monstersKilled, int score)
     {
-        LevelData levelData = gameData.levels.Find(l => l.levelNumber == levelNumber)
-                           ?? new LevelData { levelNumber = levelNumber };
+        LevelData levelData = gameData.levels.Find(l => l.levelNumber == levelNumber);
+        if(levelData == null)
+        {
+            Debug.LogError($"Level data no configurado para el nivel {levelNumber}");
+            return;
+        }
 
         // Actualiza datos del nivel.
         levelData.timeTaken = timeTaken;
@@ -210,7 +224,7 @@ public class GameManager : MonoBehaviour
     #region ---- Events ----
     private void OnEnable()
     {
-        OnLevelChanged += CheckCurrentLevelInfo;
+        //OnLevelChanged += CheckCurrentLevelInfo;
     }
 
     private void OnDisable()
@@ -225,15 +239,32 @@ public class GameManager : MonoBehaviour
     #endregion
 
     // Guardar al cerrar el juego
-    private void OnApplicationQuit()
+    private void OnExitGame()
     {
-        if(levelData != null && levelData.levelNumber != 0)
+        if(levelData != null && levelData.levelNumber != 0) // MainMenu es nivel 0
         {
             gameData.lastLevelPlayed = levelData.levelNumber;
         }
-
-        if(levelData == null) gameData.lastLevelPlayed = 1;
+        else
+        {
+            // Si no hay datos del nivel o estas en el menu, guarda el nivel por defecto (1).
+            gameData.lastLevelPlayed = 1;
+        }
 
         SaveGame();
     }
+
+    private void OnApplicationQuit()
+    {
+        OnExitGame();
+    }
+
+#if UNITY_WEBGL
+    private bool OnWebGLWantsToQuit()
+    {
+        Debug.Log("WebGL application is about to quit. Saving game data...");
+        OnExitGame();
+        return true; // Permitir que la aplicación se cierre.
+    }
+#endif
 }

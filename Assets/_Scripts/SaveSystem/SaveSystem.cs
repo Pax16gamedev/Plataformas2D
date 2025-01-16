@@ -10,26 +10,31 @@ public class SaveSystem : MonoBehaviour
     {
         data.lastSaveDate = DateTime.UtcNow.ToLocalTime().ToString("o");
         string json = JsonUtility.ToJson(data, true);
-        string path = Path.Combine(Application.persistentDataPath, SaveFileName);
-        File.WriteAllText(path, json);
+        string path = GetSaveFilePath();
+        File.WriteAllText(path, json); // No funciona para WebGL
         print($"Datos guardados en: {path} en la fecha {data.lastSaveDate}");
     }
 
     public static GameData LoadGame()
     {
-        string path = Path.Combine(Application.persistentDataPath, SaveFileName);
+        string path = GetSaveFilePath();
         if(File.Exists(path))
         {
             string json = File.ReadAllText(path);
             GameData data = JsonUtility.FromJson<GameData>(json);
-            print("Datos cargados correctamente.");
+            print($"Datos cargados correctamente. Ultimo acceso {data.lastSaveDate}");
             return data;
         }
         else
         {
-            Debug.LogWarning("No se encontró el archivo de guardado.");
+            Debug.LogWarning("No se encontró el archivo de guardado. Creando uno nuevo...");
             return new GameData(); // Retorna datos por defecto.
         }
+    }
+
+    private static string GetSaveFilePath()
+    {
+        return Path.Combine(Application.persistentDataPath, SaveFileName);
     }
 
 }

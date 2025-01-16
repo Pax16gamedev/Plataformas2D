@@ -1,4 +1,3 @@
-using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -13,7 +12,7 @@ public class LevelSelection : MonoBehaviour
     private void Start()
     {
         InitializeComponents();
-        // CreateOrReplaceButtons(); // Se invoca desde GameManager a traves de Evento
+        // CreateOrReplaceButtons(); // Se invoca desde GameManager a traves de un Evento
     }
 
     private void InitializeComponents()
@@ -28,40 +27,35 @@ public class LevelSelection : MonoBehaviour
 
     private void CreateOrReplaceButtons()
     {
-        print("Creando o reemplazando botones");
+        ClearExistingButtons();
+
+        foreach(LevelData levelData in GameManager.Instance.GameData.levels) 
+        {
+            //var index = i; // Linea necesaria para cachear el valor. Lectura al entrar en select level
+            Button btn = Instantiate(buttonPrefab, levelContainer);
+            LevelButtonInfo buttonInfo = btn.GetComponent<LevelButtonInfo>();
+
+            ConfigureButton(btn, buttonInfo, levelData);
+
+            btn.onClick.AddListener(() => SelectLevel(levelData.levelNumber));
+        }
+    }
+
+    private void ClearExistingButtons()
+    {
         for(int i = levelContainer.childCount - 1; i >= 0; i--)
         {
             Destroy(levelContainer.GetChild(i).gameObject);
         }
-
-        for(int i = 1; i <= GameManager.Instance.TotalLevels; i++) // Empiezo en 1 porque el indice 0 es el menu principal
-        {
-            var index = i; // Linea necesaria para cachear el valor. Lectura al entrar en select level
-            Button btn = Instantiate(buttonPrefab, levelContainer);
-
-            btn.onClick.AddListener(() => SelectLevel(index));
-            btn.GetComponentInChildren<TextMeshProUGUI>().text = index.ToString();
-
-            DisplayLevelProgress(btn, index);
-        }
     }
 
-    private void DisplayLevelProgress(Button button, int levelIndex)
+    private void ConfigureButton(Button button, LevelButtonInfo buttonInfo, LevelData levelData)
     {
-        // Obtener datos del nivel desde el GameManager.
-        LevelData levelData = GameManager.Instance.GameData.levels.Find(l => l.levelNumber == levelIndex);
-        if(levelData == null) return;
+        buttonInfo.NivelTMP.text = $"Nivel {levelData.levelNumber}";
+        buttonInfo.EstrellasTMP.text = $"{levelData.highestScore} estrellas";
 
-        // Mostrar progreso de estrellas
-        //int stars = PlayerPrefs.GetInt("Nivel" + index + "_Estrellas", 0);
-        //btn.transform.Find("StarsText").GetComponent<TextMeshProUGUI>().text = $"{stars} / 3";
-
-        // Mostrar el progreso de estrellas o cualquier otra informacion.
-        //TextMeshProUGUI starsText = button.transform.Find("StarsText")?.GetComponent<TextMeshProUGUI>();
-        //if(starsText != null)
-        //{
-        //    starsText.text = $"{levelData.highestScore} puntos"; // Ejemplo: Mostrar puntuacion mas alta.
-        //}
+        string mejorTiempo = levelData.bestTime == float.MaxValue ? "-" : $"{levelData.bestTime:0.00}s";
+        buttonInfo.MejorTiempoTMP.text = $"Mejor Tiempo: {mejorTiempo}";
 
         // Habilitar o deshabilitar el boton segun el estado del nivel.
         button.interactable = levelData.levelUnlocked;
@@ -75,6 +69,7 @@ public class LevelSelection : MonoBehaviour
 
     public void OnLevelProgressChanged()
     {
+
         CreateOrReplaceButtons();
     }
 
