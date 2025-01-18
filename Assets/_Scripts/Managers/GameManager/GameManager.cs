@@ -9,6 +9,8 @@ public class GameManager : MonoBehaviour
     public enum GameState { PLAYING, PAUSED }
     public GameState gameState = GameState.PLAYING;
 
+    [SerializeField] bool debugMode = false;
+
     [Header("Game Data")]
     [SerializeField] private LevelInfoSO currentLevelInfo; // Serializado solo para modo editor
     private GameData gameData;
@@ -68,7 +70,10 @@ public class GameManager : MonoBehaviour
         GameObject playerGO = GameObject.FindGameObjectWithTag(Constants.TAGS.PLAYER_HITBOX);
         player = playerGO.GetComponent<Player>();
 
-        player.transform.position = currentLevelInfo.startingPosition;
+        if(!debugMode)
+        {
+            player.transform.position = currentLevelInfo.startingPosition;
+        }
 
         GameObject flagEndLevelGO = GameObject.FindGameObjectWithTag(Constants.TAGS.FLAG_END_LEVEL);
         flagEndLevel = flagEndLevelGO.GetComponent<FlagEndLevel>();

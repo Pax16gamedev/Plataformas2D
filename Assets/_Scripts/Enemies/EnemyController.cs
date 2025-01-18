@@ -1,8 +1,11 @@
-using System;
 using UnityEngine;
 
 public class EnemyController : MonoBehaviour
 {
+    private Animator animator;
+
+    public Animator Animator => animator;
+
     private PatrolState patrolState;
     private ChaseState chaseState;
     private AttackState attackState;
@@ -15,6 +18,8 @@ public class EnemyController : MonoBehaviour
 
     private void Awake()
     {
+        animator = GetComponent<Animator>();
+
         patrolState = GetComponent<PatrolState>();
         chaseState = GetComponent<ChaseState>();
         attackState = GetComponent<AttackState>();
@@ -38,5 +43,10 @@ public class EnemyController : MonoBehaviour
 
         currentState = newState;
         currentState.OnEnterState(this);
+    }
+
+    private void OnDestroy()
+    {
+        GameManager.Instance.IncreaseMonstersKilled();
     }
 }

@@ -250,6 +250,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   attackDistance: 1.5
   timeBetweenAttacks: 2
+  chargeSpeed: 8
+  returnSpeed: 4
+  chargeDistance: 0.8
+  attackDamage: 25
 --- !u!114 &6481790483049962332
 MonoBehaviour:
   m_ObjectHideFlags: 0
