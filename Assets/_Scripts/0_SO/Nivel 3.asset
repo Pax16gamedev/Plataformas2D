@@ -16,3 +16,5 @@ MonoBehaviour:
   threeStarsTime: 45
   twoStarsTime: 90
   oneStarTime: 150
+  startingPosition: {x: -83, y: -2}
+  monstersToKill: 3

@@ -10,6 +10,8 @@ public class Wizard : EnemyBase
     private Animator animator;
     private Transform target;
 
+    private bool isAttacking;
+
     private void Awake()
     {
         base.Awake();
@@ -17,6 +19,11 @@ public class Wizard : EnemyBase
     }
 
     private void Update()
+    {
+        
+    }
+
+    private void LateUpdate()
     {
         if(!target) return;
 
@@ -37,17 +44,19 @@ public class Wizard : EnemyBase
 
     private void StartAttacking()
     {
+        isAttacking = true;
         StartCoroutine(TriggerAttack());
     }
 
     private void StopAttacking()
     {
+        isAttacking = false;
         StopCoroutine(TriggerAttack());
     }
 
     IEnumerator TriggerAttack()
     {
-        while(true)
+        while(isAttacking)
         {
             animator.SetTrigger(Constants.ANIMATIONS.WIZARD.ATTACK_TRIGGER);
             yield return new WaitForSeconds(timeBetweenAttacks);

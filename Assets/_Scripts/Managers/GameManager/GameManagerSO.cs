@@ -30,11 +30,8 @@ public class GameManagerSO : ScriptableSingleton<GameManagerSO>
                            ?? new LevelData { levelNumber = levelNumber };
 
         // Actualiza datos del nivel.
-        levelData.timeTaken = timeTaken;
-        levelData.monstersKilled = monstersKilled;
         levelData.score = score;
         levelData.bestTime = Mathf.Min(levelData.bestTime, timeTaken);
-        levelData.highestScore = Mathf.Max(levelData.highestScore, score);
         levelData.levelFinished = true;
 
         // Desbloquea el siguiente nivel.

@@ -4,11 +4,9 @@ using System.Collections.Generic;
 public class LevelData
 {
     public int levelNumber;
-    public float timeTaken;
     public int score;
-    public int monstersKilled;
+    public int stars;
     public float bestTime;
-    public int highestScore;
     public bool levelFinished;
     public bool levelUnlocked;
 }

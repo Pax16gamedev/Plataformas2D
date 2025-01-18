@@ -62,7 +62,7 @@ public class Golem_Stone : MonoBehaviour
         }
     }
 
-    private void Fragment()
+    private void Fragment(HealthSystem enemySystem)
     {
         for(int i = 0; i < slimesToSpawn; i++)
         {

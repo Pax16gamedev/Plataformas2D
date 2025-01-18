@@ -7,6 +7,7 @@ public class VisualDamageFeedback : MonoBehaviour
     [SerializeField] private Color damageColor = Color.red;
     [SerializeField] private float flashDuration = 0.1f;
     private SpriteRenderer spriteRenderer;
+    private Color originalColor;
 
     [Header("Particles")]
     [SerializeField] private ParticleSystem damageParticles;
@@ -18,6 +19,11 @@ public class VisualDamageFeedback : MonoBehaviour
     private void Awake()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
+    }
+
+    private void Start()
+    {
+        originalColor = spriteRenderer.color;
     }
 
     public void TriggerFeedback()
@@ -40,7 +46,6 @@ public class VisualDamageFeedback : MonoBehaviour
 
     private IEnumerator FlashColor()
     {
-        Color originalColor = spriteRenderer.color;
         spriteRenderer.color = damageColor;
 
         yield return new WaitForSeconds(flashDuration);

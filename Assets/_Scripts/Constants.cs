@@ -12,6 +12,7 @@ public static class Constants
         public const string PLAYER_DETECTION = "PlayerDetection";
         public const string ENEMY = "Enemy";
         public const string GROUND = "Ground";
+        public const string FLAG_END_LEVEL = "FlagEndLevel";
     }
 
     public static class ANIMATIONS

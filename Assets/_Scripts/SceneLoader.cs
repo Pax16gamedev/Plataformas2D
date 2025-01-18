@@ -1,11 +1,12 @@
 using System.Collections;
-using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class SceneLoader : MonoBehaviour
 {
+    public static SceneLoader Instance;
+
     [Header("UI Elements")]
     [SerializeField] GameObject main;
     [SerializeField] TextMeshProUGUI loadingText;
@@ -16,6 +17,17 @@ public class SceneLoader : MonoBehaviour
 
     [Header("Levels")]
     [SerializeField] LevelInfoSO[] levels; // Alineado con Build Index -1
+
+    private void Awake()
+    {
+        if(Instance != null)
+        {
+            Destroy(gameObject);
+            return;
+        }
+        Instance = this;
+        DontDestroyOnLoad(gameObject);
+    }
 
     private void Start()
     {
@@ -66,20 +78,19 @@ public class SceneLoader : MonoBehaviour
             float progress = Mathf.Clamp01(operation.progress / 0.9f);
             //progressBar.value = progress;
 
-            // Actualizamos el texto opcional de la carga
             loadingText.text = $"Cargando... {(int)(progress * 100)}%";
 
             // Una vez que llegamos al 90%, permitimos la activacion de la escena
             if (operation.progress >= 0.9f)
             {
-                //progressBar.value = 1f;
                 loadingText.text = $"Completado 100%";
 
                 yield return new WaitForSeconds(waitTimeDelayInSeconds);
                 operation.allowSceneActivation = true;
-            }
-
+            }            
             yield return null;
         }
+        main.SetActive(false);
+        GameManager.Instance.CanStartLevel();
     }
 }

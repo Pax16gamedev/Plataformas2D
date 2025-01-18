@@ -48,7 +48,7 @@ public class PlayerAnimation : MonoBehaviour
 
     public void Dash()
     {
-        print("Dashing animation!");
+        //print("Dashing animation!");
     }
 
     // Se ejecuta desde un evento de animacion

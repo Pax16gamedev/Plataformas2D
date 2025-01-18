@@ -34,4 +34,9 @@ public class Bat : MonoBehaviour
     {
         animator.SetTrigger(Constants.ANIMATIONS.BAT.ATTACK_BOOL);
     }
+
+    private void OnDestroy()
+    {
+        GameManager.Instance.IncreaseMonstersKilled();
+    }
 }

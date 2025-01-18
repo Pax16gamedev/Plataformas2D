@@ -25,11 +25,6 @@ public class FireBall : MonoBehaviour
         Invoke(nameof(TriggerExplosion), lifeSpan);
     }
 
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
-        
-    }
-
     private void OnCollisionEnter2D(Collision2D collision)
     {
         if(collision.gameObject.CompareTag(Constants.TAGS.GROUND))
@@ -50,6 +45,9 @@ public class FireBall : MonoBehaviour
 
     private void TriggerExplosion()
     {
+        rb.velocity = Vector3.zero;
+        rb.gravityScale = 0;
+
         animator.SetTrigger(Constants.ANIMATIONS.FIREBALL.EXPLODE_TRIGGER);
     }
 

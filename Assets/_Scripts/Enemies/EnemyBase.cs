@@ -9,8 +9,10 @@ public class EnemyBase : MonoBehaviour
 
     [Header("Puntuacion")]
     [SerializeField] protected int scoreValue = 100;
+    public int ScoreValue => scoreValue;
+    public bool IsOnEnemyDeathSubscribed { get; set; } = false; // Nueva propiedad para controlar suscripciones
 
-    public event Action<int> OnEnemyDeath;
+    public event Action<EnemyBase> OnEnemyDeath;
 
     protected HealthSystem healthSystem;
     protected VisualDamageFeedback damageFeedback;
@@ -23,7 +25,6 @@ public class EnemyBase : MonoBehaviour
 
     private void TriggerVisualFeedback(float dmg)
     {
-        print($"Daño recibido {dmg}");
         damageFeedback.TriggerFeedback();
     }
 
@@ -35,6 +36,7 @@ public class EnemyBase : MonoBehaviour
     private void OnDestroy()
     {
         healthSystem.OnDamage -= TriggerVisualFeedback;
-        OnEnemyDeath?.Invoke(scoreValue);
+        OnEnemyDeath?.Invoke(this);
+        GameManager.Instance.IncreaseMonstersKilled();
     }
 }

@@ -12,7 +12,6 @@ public class SaveSystem : MonoBehaviour
         string json = JsonUtility.ToJson(data, true);
         string path = GetSaveFilePath();
         File.WriteAllText(path, json); // No funciona para WebGL
-        print($"Datos guardados en: {path} en la fecha {data.lastSaveDate}");
     }
 
     public static GameData LoadGame()

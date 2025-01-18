@@ -3,21 +3,24 @@ using UnityEngine;
 
 public class HealthSystem : MonoBehaviour
 {
-    [SerializeField] float health;
+    [Header("Vida")]
+    [SerializeField] float currentHealth;
+    [SerializeField] float maxHealth;
 
-    public float Health => health;
+    public float CurrentHealth => currentHealth;
+    public float MaxHealth => maxHealth;
 
     public event Action<float> OnDamage;
-    public event Action OnDeath;
+    public event Action<HealthSystem> OnDeath;
 
     public void TakeDamage(float damage)
     {
-        health -= damage;
+        currentHealth -= damage;
         OnDamage?.Invoke(damage);
 
-        if(health <= 0)
+        if(currentHealth <= 0)
         {
-            OnDeath?.Invoke();
+            OnDeath?.Invoke(this);
             Die();
         }
     }

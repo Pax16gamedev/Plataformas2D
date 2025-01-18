@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using UnityEngine;
 
@@ -6,16 +5,17 @@ public class PlayerMovement : MonoBehaviour
 {
     private Rigidbody2D rb;
     private PlayerAnimation playerAnimation;
+    private PlayerVisual playerVisual;
 
     [Header("Movement system")]
     [SerializeField] float speed = 12f;
     [SerializeField] float jumpSpeed = 12f;
-    private PlayerVisual playerVisual;
 
     [Header("Dash")]
     [SerializeField] private float dashSpeed = 20f;
     [SerializeField] private float dashDuration = 0.2f;
     [SerializeField] private float dashCooldown = 1f;
+
     private bool isDashing = false;
     private float dashCooldownTimer = 0;
 
@@ -53,6 +53,12 @@ public class PlayerMovement : MonoBehaviour
         initialGravityScale = rb.gravityScale;
     }
 
+    private void Start()
+    {
+        dashCooldownTimer = dashCooldown;
+        UIManager.Instance.DashBar.SetMaxDashDuration(dashCooldown);
+    }
+
     void Update()
     {
         if(!canMove) return;
@@ -78,7 +84,7 @@ public class PlayerMovement : MonoBehaviour
             TriggerJump();
         }
 
-        if(Input.GetKeyDown(KeyCode.LeftShift) && dashCooldownTimer <= 0)
+        if(Input.GetKeyDown(KeyCode.LeftShift) && dashCooldownTimer >= dashCooldown)
         {
             TriggerDash();
         }
@@ -150,9 +156,10 @@ public class PlayerMovement : MonoBehaviour
 
     private void HandleDashCooldown()
     {
-        if(dashCooldownTimer <= 0) return;
+        if(dashCooldownTimer >= dashCooldown) return;
 
-        dashCooldownTimer -= Time.deltaTime;
+        dashCooldownTimer += Time.deltaTime;
+        UIManager.Instance.DashBar.SetDash(dashCooldownTimer);
     }
 
     private void TriggerDash()
@@ -163,7 +170,9 @@ public class PlayerMovement : MonoBehaviour
     private IEnumerator Dash()
     {
         isDashing = true;
-        dashCooldownTimer = dashCooldown;
+        dashCooldownTimer = 0;
+
+        UIManager.Instance.DashBar.SetDash(0);
 
         // Desactivo la gravedad mientras haces el dash
         rb.gravityScale = 0;

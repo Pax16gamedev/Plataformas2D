@@ -6,10 +6,14 @@ public class LevelInfoSO : ScriptableObject
     [Header("Config")]
     public int ID; // Debe casar con el buildIndex para funcionar
 
-    [Header("Level")]
+    [Header("Level Time")]
     public float threeStarsTime; 
     public float twoStarsTime;
     public float oneStarTime;
+
+    [Header("Level info")]
+    public Vector2 startingPosition;
+    public int monstersToKill;
 
     public int CalculateStars(float time)
     {

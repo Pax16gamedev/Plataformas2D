@@ -6,6 +6,8 @@ using UnityEngine.SceneManagement;
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
+    public enum GameState { PLAYING, PAUSED }
+    public GameState gameState = GameState.PLAYING;
 
     [Header("Game Data")]
     [SerializeField] private LevelInfoSO currentLevelInfo; // Serializado solo para modo editor
@@ -17,16 +19,19 @@ public class GameManager : MonoBehaviour
     private int score = 0;
     private bool levelStarted = false;
     private bool levelFinished = false;
+    private int monstersKilled = 0;
+    private FlagEndLevel flagEndLevel;
 
     public GameData GameData => gameData;
     public bool LevelStarted => levelStarted;
     public bool LevelFinished => levelFinished;
     public int TotalLevels => SceneManager.sceneCountInBuildSettings - 1; // Excluyo el menu principal.
 
-
     public event Action OnLevelChanged; // El nivel ha cambiado
     public event Action OnLevelProgressChanged; // El progreso del nivel ha cambiado
+    public event Action OnScoreChanged;
 
+    private Player player;
 
     private void Awake()
     {
@@ -56,6 +61,41 @@ public class GameManager : MonoBehaviour
 #endif
     }
 
+    // Se llama desde UIManager cada vez que se cargue una escena
+    public void CheckForSceneGameObjects()
+    {
+
+        GameObject playerGO = GameObject.FindGameObjectWithTag(Constants.TAGS.PLAYER_HITBOX);
+        player = playerGO.GetComponent<Player>();
+
+        player.transform.position = currentLevelInfo.startingPosition;
+
+        GameObject flagEndLevelGO = GameObject.FindGameObjectWithTag(Constants.TAGS.FLAG_END_LEVEL);
+        flagEndLevel = flagEndLevelGO.GetComponent<FlagEndLevel>();
+    }
+
+    public void IncreaseScore(int scoreToAdd = 0)
+    {
+        if (scoreToAdd < 0) scoreToAdd = 0;
+
+        score += scoreToAdd;
+        OnScoreChanged?.Invoke();
+        UIManager.Instance.UpdateScoreText(score);
+    }
+
+    public void IncreaseMonstersKilled()
+    {
+        monstersKilled++;
+        flagEndLevel.UpdateMobsStatus();
+    }
+    public int GetMonstersKilled() => monstersKilled;
+    public int GetMonstersToKill() => currentLevelInfo.monstersToKill;
+
+    public bool CheckIfAllMobsAreKilled()
+    {
+        return monstersKilled == currentLevelInfo.monstersToKill;
+    }
+
     private void OnDestroy()
     {
 #if UNITY_WEBGL && !UNITY_EDITOR
@@ -65,13 +105,41 @@ public class GameManager : MonoBehaviour
 
     private void Update()
     {
-        if(levelFinished || !levelStarted || !UIManager.Instance) return;
+        if(levelFinished || !levelStarted || gameState == GameState.PAUSED || !UIManager.Instance) return;
 
         timeElapsed += Time.deltaTime;
         UIManager.Instance.UpdateTimeText(timeElapsed);
     }
 
-    #region ---- Save/Load ----
+    #region ---- Game Flow - Save/Load ----
+    public void ResetVariables()
+    {
+        timeElapsed = 0;
+        score = 0;
+    }
+
+    public void PauseGame()
+    {
+        CanPlayerMove(false);
+        CanPlayerAttack(false);
+        gameState = GameState.PAUSED;
+        Time.timeScale = 0;
+    }
+    public void ResumeGame()
+    {
+        Time.timeScale = 1;
+        gameState = GameState.PLAYING;
+        CanPlayerMove(true);
+        CanPlayerAttack(true);
+    }
+
+    public void LevelCompleted()
+    {
+        PauseGame();
+        CompleteLevel(levelData.levelNumber, timeElapsed, score);
+        UIManager.Instance.ShowLevelEndScreen(levelData.stars, timeElapsed, levelData.bestTime);
+    }
+
     public void SaveGame()
     {
         SaveSystem.SaveGame(gameData);
@@ -80,8 +148,26 @@ public class GameManager : MonoBehaviour
     public void LoadGame()
     {
         gameData = SaveSystem.LoadGame();
-        OnLevelProgressChanged?.Invoke();
+        LoadLevelInfo(currentLevelInfo);
     }
+
+    public void GoToNextLevel()
+    {
+        if(CheckIfIsLastLevel())
+        {
+            print("Estoy en el ultimo nivel. No puedo cargar un siguiente");
+            return;
+        }
+        ResetVariables();
+        SceneLoader.Instance.LoadSceneWithProgress(currentLevelInfo.ID + 1);
+        OnLevelChanged?.Invoke();
+    }
+
+    public bool CheckIfIsLastLevel()
+    {
+        return currentLevelInfo.ID == TotalLevels;
+    }
+
     #endregion
 
     #region ---- Level Management ----
@@ -110,11 +196,9 @@ public class GameManager : MonoBehaviour
             LevelData levelData = new LevelData
             {
                 levelNumber = i,
-                timeTaken = 0f,
-                monstersKilled = 0,
                 score = 0,
+                stars = 0,
                 bestTime = float.MaxValue,
-                highestScore = 0,
                 levelFinished = false,
                 levelUnlocked = (i == 1) // Solo el primer nivel desbloqueado.
             };
@@ -130,7 +214,7 @@ public class GameManager : MonoBehaviour
         levelData = gameData.levels.Find(l => l.levelNumber == levelNumber);
         if(levelData != null)
         {
-            Debug.Log($"Cargando nivel {levelNumber}: Mejor tiempo: {levelData.bestTime}, Mejor puntuación: {levelData.highestScore}");
+            Debug.Log($"Cargando nivel {levelNumber}: Mejor tiempo: {levelData.bestTime}\nEstrellas obtenidas {levelData.stars}");
         }
         else
         {
@@ -138,9 +222,8 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void CompleteLevel(int levelNumber, float timeTaken, int monstersKilled, int score)
+    public void CompleteLevel(int levelNumber, float timeTaken, int score)
     {
-        LevelData levelData = gameData.levels.Find(l => l.levelNumber == levelNumber);
         if(levelData == null)
         {
             Debug.LogError($"Level data no configurado para el nivel {levelNumber}");
@@ -148,12 +231,10 @@ public class GameManager : MonoBehaviour
         }
 
         // Actualiza datos del nivel.
-        levelData.timeTaken = timeTaken;
-        levelData.monstersKilled = monstersKilled;
         levelData.score = score;
         levelData.bestTime = Mathf.Min(levelData.bestTime, timeTaken);
-        levelData.highestScore = Mathf.Max(levelData.highestScore, score);
         levelData.levelFinished = true;
+        levelData.stars = currentLevelInfo.CalculateStars(timeElapsed);
 
         // Desbloquea el siguiente nivel.
         UnlockNextLevel(levelNumber);
@@ -208,12 +289,18 @@ public class GameManager : MonoBehaviour
         StartLevel(currentLevelInfo.ID);
     }
 
-    private void CanStartLevel()
+    public void CanStartLevel()
     {
         if(currentLevelInfo == null || currentLevelInfo.ID == 0) // Importante: ID 0 -> Menu principal
         {
+            Debug.LogWarning("Current level info not found!");
             levelStarted = false;
             return;
+        }
+
+        if(currentLevelInfo.monstersToKill == 0)
+        {
+            Debug.LogWarning("Monsters to kill on currentLevelInfo not set");
         }
 
         levelStarted = true;
@@ -238,6 +325,7 @@ public class GameManager : MonoBehaviour
     }
     #endregion
 
+    #region Exit Game methods
     // Guardar al cerrar el juego
     private void OnExitGame()
     {
@@ -267,4 +355,12 @@ public class GameManager : MonoBehaviour
         return true; // Permitir que la aplicación se cierre.
     }
 #endif
+    #endregion
+
+    #region Player flags
+    public void CanPlayerMove(bool canMove) => player.CanMove(canMove);
+    public void CanPlayerAttack(bool canAttack) => player.CanAttack(canAttack);
+
+    #endregion
+
 }

@@ -7,22 +7,9 @@ public class LevelSelection : MonoBehaviour
     [SerializeField] Transform levelContainer;
     [SerializeField] Button buttonPrefab;
 
-    private SceneLoader loader;
-
     private void Start()
     {
-        InitializeComponents();
-        // CreateOrReplaceButtons(); // Se invoca desde GameManager a traves de un Evento
-    }
-
-    private void InitializeComponents()
-    {
-        // Buscar el cargador de escenas por etiqueta.
-        loader = GameObject.FindGameObjectWithTag(Constants.TAGS.SCENE_LOADER)?.GetComponent<SceneLoader>();
-        if(loader == null)
-        {
-            Debug.LogWarning("SceneLoader no encontrado en la escena.");
-        }
+        CreateOrReplaceButtons(); // Se invoca desde GameManager a traves de un Evento
     }
 
     private void CreateOrReplaceButtons()
@@ -52,7 +39,7 @@ public class LevelSelection : MonoBehaviour
     private void ConfigureButton(Button button, LevelButtonInfo buttonInfo, LevelData levelData)
     {
         buttonInfo.NivelTMP.text = $"Nivel {levelData.levelNumber}";
-        buttonInfo.EstrellasTMP.text = $"{levelData.highestScore} estrellas";
+        buttonInfo.EstrellasTMP.text = $"{levelData.stars} estrellas";
 
         string mejorTiempo = levelData.bestTime == float.MaxValue ? "-" : $"{levelData.bestTime:0.00}s";
         buttonInfo.MejorTiempoTMP.text = $"Mejor Tiempo: {mejorTiempo}";
@@ -64,12 +51,11 @@ public class LevelSelection : MonoBehaviour
     public void SelectLevel(int nivelIndex)
     {
         //SceneManager.LoadScene(nivelIndex);
-        loader.LoadSceneWithProgress(nivelIndex);
+        SceneLoader.Instance.LoadSceneWithProgress(nivelIndex);
     }
 
     public void OnLevelProgressChanged()
     {
-
         CreateOrReplaceButtons();
     }
 
@@ -78,7 +64,7 @@ public class LevelSelection : MonoBehaviour
         GameManager.Instance.OnLevelProgressChanged += OnLevelProgressChanged;
     }
 
-    private void OnDisable()
+    private void OnDestroy()
     {
         GameManager.Instance.OnLevelProgressChanged -= OnLevelProgressChanged;
     }
