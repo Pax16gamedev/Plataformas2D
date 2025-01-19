@@ -109,12 +109,18 @@ public class PlayerCombat : MonoBehaviour
     private void OnEnable()
     {
         healthSystem.OnDamage += OnDamageTaken;
+        healthSystem.OnDeath += HandleDeath;
     }
 
     private void OnDestroy()
     {
         healthSystem.OnDamage -= OnDamageTaken;
+        healthSystem.OnDeath -= HandleDeath;
     }
 
+    private void HandleDeath(HealthSystem playerHealth)
+    {
+        UIManager.Instance.ShowDeathScreen();
+    }
     
 }

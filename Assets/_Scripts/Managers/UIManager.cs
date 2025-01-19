@@ -13,6 +13,7 @@ public class UIManager : MonoBehaviour
     [Header("Paneles")]
     [SerializeField] private GameObject pausePanel;
     [SerializeField] private GameObject levelEndScreenPanel;
+    [SerializeField] private GameObject deathScreenPanel;
 
     [Header("Info paneles")]
     [SerializeField] EndScreenInfo endScreenInfo;
@@ -87,9 +88,18 @@ public class UIManager : MonoBehaviour
 
     public void HideLevelEndScreen() => levelEndScreenPanel.SetActive(false);
 
+    public void ShowDeathScreen() => deathScreenPanel.SetActive(true);
+    public void HideDeathScreen() => deathScreenPanel.SetActive(false);
+
     public void GoToNextLevel()
     {
         GameManager.Instance.GoToNextLevel();
+    }
+
+    public void RetryLevel()
+    {
+        GameManager.Instance.RestartLevel();
+        HideDeathScreen();
     }
 
 }

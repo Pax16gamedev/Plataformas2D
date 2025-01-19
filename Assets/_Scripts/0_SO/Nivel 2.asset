@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: Nivel 2
   m_EditorClassIdentifier: 
   ID: 2
-  threeStarsTime: 15
-  twoStarsTime: 20
-  oneStarTime: 25
+  threeStarsTime: 18
+  twoStarsTime: 24
+  oneStarTime: 36
   startingPosition: {x: -86, y: -17}
-  monstersToKill: 3
+  monstersToKill: 5

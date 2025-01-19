@@ -215,12 +215,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 503c6b90ac6988f48b2af6780907acb1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  route:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
+  route: []
   patrolSpeed: 2
 --- !u!114 &4226956095015439814
 MonoBehaviour:

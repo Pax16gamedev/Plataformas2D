@@ -138,6 +138,11 @@ public class GameManager : MonoBehaviour
         CanPlayerAttack(true);
     }
 
+    public void RestartLevel()
+    {
+        SceneLoader.Instance.LoadSceneWithProgress(currentLevelInfo.ID);
+    }
+
     public void LevelCompleted()
     {
         PauseGame();
