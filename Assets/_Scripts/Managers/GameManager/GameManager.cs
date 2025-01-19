@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using Cinemachine;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -34,6 +35,7 @@ public class GameManager : MonoBehaviour
     public event Action OnScoreChanged;
 
     private Player player;
+    CinemachineVirtualCamera virtualCamera;
 
     private void Awake()
     {
@@ -66,7 +68,6 @@ public class GameManager : MonoBehaviour
     // Se llama desde UIManager cada vez que se cargue una escena
     public void CheckForSceneGameObjects()
     {
-
         GameObject playerGO = GameObject.FindGameObjectWithTag(Constants.TAGS.PLAYER_HITBOX);
         player = playerGO.GetComponent<Player>();
 
@@ -74,6 +75,10 @@ public class GameManager : MonoBehaviour
         {
             player.transform.position = currentLevelInfo.startingPosition;
         }
+
+        GameObject virtualCameraGO = GameObject.FindGameObjectWithTag(Constants.TAGS.MAIN_VIRTUAL_CAMERA);
+        virtualCamera = virtualCameraGO.GetComponent<CinemachineVirtualCamera>();
+        virtualCamera.Follow = player.transform;
 
         GameObject flagEndLevelGO = GameObject.FindGameObjectWithTag(Constants.TAGS.FLAG_END_LEVEL);
         flagEndLevel = flagEndLevelGO.GetComponent<FlagEndLevel>();
@@ -98,7 +103,7 @@ public class GameManager : MonoBehaviour
 
     public bool CheckIfAllMobsAreKilled()
     {
-        return monstersKilled == currentLevelInfo.monstersToKill;
+        return monstersKilled >= currentLevelInfo.monstersToKill;
     }
 
     private void OnDestroy()
@@ -121,6 +126,7 @@ public class GameManager : MonoBehaviour
     {
         timeElapsed = 0;
         score = 0;
+        monstersKilled = 0;
     }
 
     public void PauseGame()
@@ -140,7 +146,7 @@ public class GameManager : MonoBehaviour
 
     public void RestartLevel()
     {
-        SceneLoader.Instance.LoadSceneWithProgress(currentLevelInfo.ID);
+        LoadLevel(currentLevelInfo.ID);
     }
 
     public void LevelCompleted()
@@ -168,14 +174,20 @@ public class GameManager : MonoBehaviour
             print("Estoy en el ultimo nivel. No puedo cargar un siguiente");
             return;
         }
-        ResetVariables();
-        SceneLoader.Instance.LoadSceneWithProgress(currentLevelInfo.ID + 1);
+        LoadLevel(currentLevelInfo.ID + 1);
         OnLevelChanged?.Invoke();
     }
 
     public bool CheckIfIsLastLevel()
     {
         return currentLevelInfo.ID == TotalLevels;
+    }
+
+    public void LoadLevel(int levelIndex)
+    {
+        ResetVariables();
+        SceneLoader.Instance.LoadSceneWithProgress(levelIndex);
+        ResumeGame();
     }
 
     #endregion

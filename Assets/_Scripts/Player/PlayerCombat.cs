@@ -37,10 +37,11 @@ public class PlayerCombat : MonoBehaviour
             TriggerAttack();
         }
 
-        if(Input.GetMouseButtonDown(1))
-        {
-            healthSystem.TakeDamage(10);
-        }
+        // Testing
+        //if(Input.GetMouseButtonDown(1))
+        //{
+        //    healthSystem.TakeDamage(10);
+        //}
     }
 
     private void TriggerAttack()

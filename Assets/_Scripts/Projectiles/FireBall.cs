@@ -8,6 +8,7 @@ public class FireBall : MonoBehaviour
     [SerializeField] float fireForce = 8;
     [SerializeField] float lifeSpan = 3;
     [SerializeField] float damage = 30;
+    [SerializeField] float knockbackForce = 30;
 
     [SerializeField] int maxBounces = 3;
 
@@ -40,6 +41,7 @@ public class FireBall : MonoBehaviour
         {
             collision.gameObject.GetComponent<HealthSystem>()?.TakeDamage(damage);
             TriggerExplosion();
+            //ApplyKnockback(collision); // TODO: Revisar
         }
     }
 
@@ -49,6 +51,24 @@ public class FireBall : MonoBehaviour
         rb.gravityScale = 0;
 
         animator.SetTrigger(Constants.ANIMATIONS.FIREBALL.EXPLODE_TRIGGER);
+    }
+
+    private void ApplyKnockback(Collision2D collision)
+    {
+        Rigidbody2D playerRb = collision.gameObject.GetComponentInParent<Rigidbody2D>();
+        if(playerRb == null) return;
+
+        // Determinar dirección del knockback (desde el objeto que colisiona)
+        Vector2 knockbackDirection = (collision.transform.position - transform.position).normalized;
+        knockbackDirection = new Vector2(knockbackDirection.x, 0);
+
+        // Invertimos la dirección para empujar en la direccion opuesta
+        knockbackDirection = -knockbackDirection;
+
+        // Aplicar la fuerza de knockback en la direccion opuesta
+        playerRb.AddForce(knockbackDirection * knockbackForce, ForceMode2D.Impulse);
+
+        Debug.Log($"Knockback aplicado en dirección: {knockbackDirection}");
     }
 
     // Se ejecuta desde un evento de animacion

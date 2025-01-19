@@ -13,6 +13,7 @@ public static class Constants
         public const string ENEMY = "Enemy";
         public const string GROUND = "Ground";
         public const string FLAG_END_LEVEL = "FlagEndLevel";
+        public const string MAIN_VIRTUAL_CAMERA = "MainVirtualCamera";
     }
 
     public static class ANIMATIONS

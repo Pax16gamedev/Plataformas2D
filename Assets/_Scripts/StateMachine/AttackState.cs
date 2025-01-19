@@ -115,6 +115,7 @@ public class AttackState : State<EnemyController>
         if(Vector3.Distance(transform.position, target.position) <= chargeDistance)
         {
             isCharging = false;
+            isReturning = true;
         }
     }
 
@@ -132,7 +133,6 @@ public class AttackState : State<EnemyController>
         if(Vector3.Distance(transform.position, initialPosition) < 0.1f)
         {
             isReturning = false;
-            print($"{name} regresó a su posición inicial.");
         }
     }
 

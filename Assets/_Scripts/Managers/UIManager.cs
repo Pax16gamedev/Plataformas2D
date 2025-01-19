@@ -1,3 +1,4 @@
+using System.Collections;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -14,6 +15,9 @@ public class UIManager : MonoBehaviour
     [SerializeField] private GameObject pausePanel;
     [SerializeField] private GameObject levelEndScreenPanel;
     [SerializeField] private GameObject deathScreenPanel;
+
+    [Header("Delay")]
+    [SerializeField] float deathScreenDelay = 1;
 
     [Header("Info paneles")]
     [SerializeField] EndScreenInfo endScreenInfo;
@@ -88,7 +92,18 @@ public class UIManager : MonoBehaviour
 
     public void HideLevelEndScreen() => levelEndScreenPanel.SetActive(false);
 
-    public void ShowDeathScreen() => deathScreenPanel.SetActive(true);
+    public void ShowDeathScreen()
+    {
+        StartCoroutine(DeathScreen());
+    }
+
+    private IEnumerator DeathScreen()
+    {
+        yield return new WaitForSeconds(deathScreenDelay);
+        deathScreenPanel.SetActive(true);
+        GameManager.Instance.PauseGame();
+    }
+
     public void HideDeathScreen() => deathScreenPanel.SetActive(false);
 
     public void GoToNextLevel()

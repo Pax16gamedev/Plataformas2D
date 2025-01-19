@@ -38,6 +38,7 @@ public class ChaseState : State<EnemyController>
         if(collision.CompareTag(Constants.TAGS.PLAYER_DETECTION))
         {
             target = collision.gameObject.transform;
+            LookAt(target);
         }
     }
 
@@ -51,6 +52,18 @@ public class ChaseState : State<EnemyController>
         if(collision.CompareTag(Constants.TAGS.PLAYER_DETECTION))
         {
             controller.ChangeState(controller.PatrolState);
+        }
+    }
+
+    private void LookAt(Transform target)
+    {
+        if(target.position.x > transform.position.x) // Derecha
+        {
+            transform.eulerAngles = Vector3.zero;
+        }
+        else if(target.position.x < transform.position.x) // Izquierda
+        {
+            transform.eulerAngles = new Vector2(0, 180);
         }
     }
 }
