@@ -13,7 +13,6 @@ public class VisualDamageFeedback : MonoBehaviour
     [SerializeField] private ParticleSystem damageParticles;
 
     [Header("Sound")]
-    [SerializeField] private AudioSource audioSource;
     [SerializeField] private AudioClip damageSound;
 
     private void Awake()
@@ -38,9 +37,9 @@ public class VisualDamageFeedback : MonoBehaviour
             damageParticles.Play();
         }
 
-        if(audioSource != null && damageSound != null)
+        if(damageSound != null)
         {
-            audioSource.PlayOneShot(damageSound);
+            AudioManager.Instance.PlaySFX(damageSound);
         }
     }
 

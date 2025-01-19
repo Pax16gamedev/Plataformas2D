@@ -18,3 +18,4 @@ MonoBehaviour:
   oneStarTime: 36
   startingPosition: {x: -86, y: -17}
   monstersToKill: 5
+  musicIndexToPlay: 2

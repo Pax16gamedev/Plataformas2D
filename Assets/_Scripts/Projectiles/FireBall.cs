@@ -5,12 +5,16 @@ public class FireBall : MonoBehaviour
     private Rigidbody2D rb;
     private Animator animator;
 
+    [Header("Stats")]
     [SerializeField] float fireForce = 8;
     [SerializeField] float lifeSpan = 3;
     [SerializeField] float damage = 30;
     [SerializeField] float knockbackForce = 30;
-
     [SerializeField] int maxBounces = 3;
+
+    [Header("Audio")]
+    [SerializeField] AudioClip bounceSfx;
+    [SerializeField] AudioClip explosionSfx;
 
     private int currentBounces = 0;
 
@@ -30,6 +34,8 @@ public class FireBall : MonoBehaviour
     {
         if(collision.gameObject.CompareTag(Constants.TAGS.GROUND))
         {
+            //AudioSource.PlayClipAtPoint(bounceSfx, Camera.main.transform.position);
+            AudioManager.Instance.PlaySFX(bounceSfx);
             currentBounces++;
             if(currentBounces >= maxBounces)
             {
@@ -74,6 +80,7 @@ public class FireBall : MonoBehaviour
     // Se ejecuta desde un evento de animacion
     private void DestroyFireBall()
     {
+        AudioManager.Instance.PlaySFX(explosionSfx);
         Destroy(gameObject);
     }
 }

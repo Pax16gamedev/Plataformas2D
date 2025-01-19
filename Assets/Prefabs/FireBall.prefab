@@ -189,6 +189,8 @@ MonoBehaviour:
   damage: 20
   knockbackForce: 20
   maxBounces: 3
+  bounceSfx: {fileID: 8300000, guid: d592b2258b02b9b498bbcb95f4a50a63, type: 3}
+  explosionSfx: {fileID: 8300000, guid: 864b9455e7295a94a865ccff446a40cc, type: 3}
 --- !u!1 &8850340905536402609
 GameObject:
   m_ObjectHideFlags: 0

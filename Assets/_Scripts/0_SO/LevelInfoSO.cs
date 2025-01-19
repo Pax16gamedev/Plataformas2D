@@ -15,6 +15,9 @@ public class LevelInfoSO : ScriptableObject
     public Vector2 startingPosition;
     public int monstersToKill;
 
+    [Header("Audio info")]
+    public int musicIndexToPlay; // Igual que el ID del nivel
+
     public int CalculateStars(float time)
     {
         if(time <= threeStarsTime) return 3; // 3 estrellas

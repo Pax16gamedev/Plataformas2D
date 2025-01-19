@@ -234,11 +234,7 @@ public class GameManager : MonoBehaviour
     {
         // Busca datos del nivel.
         levelData = gameData.levels.Find(l => l.levelNumber == levelNumber);
-        if(levelData != null)
-        {
-            Debug.Log($"Cargando nivel {levelNumber}: Mejor tiempo: {levelData.bestTime}\nEstrellas obtenidas {levelData.stars}");
-        }
-        else
+        if(levelData == null)
         {
             Debug.Log($"Iniciando nivel {levelNumber}: Sin datos previos.");
         }
@@ -309,6 +305,7 @@ public class GameManager : MonoBehaviour
         currentLevelInfo = levelInfo;
         OnLevelChanged?.Invoke();
         StartLevel(currentLevelInfo.ID);
+        AudioManager.Instance.PlayMusic(currentLevelInfo.musicIndexToPlay);
     }
 
     public void CanStartLevel()
