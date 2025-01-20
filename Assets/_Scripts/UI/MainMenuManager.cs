@@ -1,3 +1,5 @@
+using System.Collections;
+using TMPro;
 using UnityEngine;
 
 public class MainMenuManager : MonoBehaviour
@@ -14,9 +16,44 @@ public class MainMenuManager : MonoBehaviour
     [Header("Selector de niveles")]
     [SerializeField] private LevelSelection levelSelection;
 
+    [Header("Text Settings")]
+    [SerializeField] TextMeshProUGUI infoTMP;
+    [SerializeField] private float typingSpeed = 0.05f;
+    [SerializeField] private float restartDelay = 15f;
+
+    private string fullText;
+    private Coroutine typingCoroutine;
+
     private void Start()
     {
         CheckWhichContainerToShow();
+
+        fullText = infoTMP.text;
+        infoTMP.text = ""; // Limpia el texto inicialmente
+        StartTypewriterEffect();
+    }
+
+    private void StartTypewriterEffect()
+    {
+        if(typingCoroutine != null)
+        {
+            StopCoroutine(typingCoroutine);
+        }
+
+        typingCoroutine = StartCoroutine(TypeText());
+    }
+
+    private IEnumerator TypeText()
+    {
+        infoTMP.text = "";
+        foreach(char letter in fullText.ToCharArray())
+        {
+            infoTMP.text += letter;
+            yield return new WaitForSeconds(typingSpeed);
+        }
+
+        yield return new WaitForSeconds(restartDelay);
+        StartTypewriterEffect(); // Reinicio
     }
 
     public void PlayGame()
